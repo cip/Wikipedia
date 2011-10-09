@@ -21,4 +21,6 @@
     <plugin name="com.phonegap.menu.context"         value="com.phonegap.menu.AppMenu" />
     <plugin name="com.phonegap.menu.context.command" value="com.phonegap.menu.AppMenuItem" />
 	<plugin name="IndeterminateProgress" value="com.phonegap.progress.IndeterminateProgress" />
-</plugins>
+    <plugin name="ZimPhoneGapPlugin" value="com.trial.phonegap.plugin.zim.ZimPhoneGapPlugin"  />
+    <url-filter value=""/>
+ </plugins>
