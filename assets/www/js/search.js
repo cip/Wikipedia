@@ -1,10 +1,16 @@
 function search()
 {
+	if (true) {
+		var searchParam = document.getElementById("searchParam").value;
+		loadArticle(searchParam)
+	} else {
+	
 	if (hasNetworkConnection())
 	{
 		showProgressLoader("Loading", "Retrieving content from Wikipedia");
 	
 		var searchParam = document.getElementById("searchParam").value;
+		
 		var requestUrl = "http://en.wikipedia.org/w/api.php?action=opensearch&";
 		requestUrl += "search=" + encodeURIComponent(searchParam) + "&";
 		requestUrl += "format=json";
@@ -36,6 +42,7 @@ function search()
 	{
 		noConnectionMsg();
 		hideOverlayDivs();
+	}
 	}
 }
 

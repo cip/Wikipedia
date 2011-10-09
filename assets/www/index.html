@@ -14,21 +14,29 @@
 	  <script type="text/javascript" charset="utf-8" src="messages/messages-en.js"></script>
 	  <script type="text/javascript" charset="utf-8" src="js/l10n-setup.js"></script>
 
+	  
 	  <script type="text/javascript" charset="utf-8" src="js/main.js"></script>
 	  <script type="text/javascript" charset="utf-8" src="js/bookmarks.js"></script>
 	  <script type="text/javascript" charset="utf-8" src="js/app_history.js"></script> 
 	  <script type="text/javascript" charset="utf-8" src="js/search.js"></script> 
 	  <script type="text/javascript" charset="utf-8" src="js/geo.js"></script> 
 	  <script type="text/javascript" charset="utf-8" src="js/settings.js"></script> 
+
 	  
 	  <script type="text/javascript" charset="utf-8" src="js/phonegap-1.0.0.js"></script>
 	  <script type="text/javascript" charset="utf-8" src="plugin/menu/index.js"></script>
-	    
+	  
+	  <script type="text/javascript" src="plugin/zim/zim_api.js"></script>
+	  <script type="text/javascript" src="plugin/zim/zim.js"></script>
+	   
 	  <link rel=stylesheet href=app.css />  
 	  	  	   
   </head>
 
   <body onload="init();">
+		
+
+		
 		
 	<header id="mainHeader">
 		<div class="titlebar">
@@ -43,6 +51,31 @@
 		</div>
 	</header>
 
+	<div id="zim">
+		<!-- Button -->
+	<input id="zimFileName" name="articleTitle" type="text"
+		value="//sdcard/wikipedia-de.zim">
+	<!-- Doesn't work (appearantly not supported by android browser)   <input id="zimFileName" name="articleTitle" type="file"
+		value="//sdcard/wikipedia-de.zim">-->
+	
+	<input id="articleTitle" name="articleTitle" type="text" value="Android">
+	<input disabled id="loadarticle" type="button" value="Load article" />
+	</div>
+	<hr>
+	<div id="status"></div>
+	<hr>
+	
+	<!-- Place Holder for placing the article data -->
+
+	
+	<div id="result">
+	<!-- <img src="img2" alt="British Blog Directory"/>-->
+	<!--  FIXME I/ not working (Check how real url looks like) -->
+	<img src="/I/d3148f9ea2878f1a399f717309671187ee70739b"/>
+	<img src="/I/796c8c8774fa1a72f8bce68810b7e95479effa91"/>
+	
+	</div>
+	
 	<div id="bookmarks">
 		<header>
 			<div class="titlebar">
@@ -76,7 +109,7 @@
 		<iframe id="main" frameborder="0" onload="javascript:iframeOnLoaded();">
 		</iframe>
 	</div> 	
-
+	  <script type="text/javascript" charset="utf-8" >function test1() {alert("test");}</script>
 	<menu type="context">
 		<command label="Add Bookmark" icon="image/optionAddBookmark.png" disabled="false" action="isBookmarksMaxLimit();" />
 		<command label="Bookmarks" icon="image/optionViewBookmarks.png" disabled="false" action="getBookmarks();" />
@@ -84,6 +117,7 @@
 		<command label="Forward" icon="image/optionForward.png" disabled="false" action="window.history.forward();" />
 		<command label="Nearby" icon="image/optionNearMe.png" disabled="false" action="getCurrentPosition();" />
 		<command label="Settings" icon="image/optionSettings.png" disabled="false" action="showSettings();" />
+		<command label="Offline" icon="image/optionSettings.png" disabled="false" action="loadArticleOld();" />		
 	</menu>	
 		
   </body>
