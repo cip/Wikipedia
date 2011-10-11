@@ -35,7 +35,7 @@
 				if (imgs[i] && imgs[i].src) {
 				// if (visible(imgs[i])) {
 					console.log("Image ("+imgs[i].src+") is visible. Load it from zimfile");
-				 	window.plugins.zim.getArticleData(document.getElementById("zimFileName").value, 
+				 	window.plugins.zim.getArticleData( 
 				 			imgs[i].src, "I",
 
 			function(r) {				 		
@@ -68,9 +68,13 @@
 			}			 
 		}
 		
+		function openZimFile() {
+			window.plugins.zim.open(document.getElementById("zimFileName").value);
+		}
 		function loadArticleOld() {
 			loadArticle(document.getElementById("articleTitle").value)
 		}
+		
 		function loadArticle(articleTitle) {
 			alert(articleTitle)
 			document.getElementById("loadarticle").disabled = true;
@@ -78,10 +82,9 @@
 			showStatus("Loading article "
 					+ articleTitle
 					+ " from file: "
-					+ document.getElementById("zimFileName").value);
-			var startTime = new Date().getTime();
-			window.plugins.zim.getArticleData(document
-					.getElementById("zimFileName").value, articleTitle, "A",
+					+ window.plugins.zim.zimFileName);
+			var startTime = new Date().getTime();			
+			window.plugins.zim.getArticleData( articleTitle, "A",
 
 			function(r) {
 				document.getElementById("loadarticle").disabled = false;

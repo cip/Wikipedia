@@ -1,5 +1,3 @@
-
-function test2() {alert("test2");}
 /**
 
  *  
@@ -9,7 +7,27 @@ function test2() {alert("test2");}
  */
 
 var Zim = function() {
+	this.zimFileName = "";
+	this.zimFileOpen = false;		
 };
+
+Zim.prototype.hasZimFileOpen = function() {
+	return this.zimFileOpen;
+};
+
+/**
+@param zimFileName The zim file to use
+*/
+Zim.prototype.open = function(zimFileName) {
+	//TODO real functionality
+	this.zimFileName = zimFileName;	
+	this.zimFileOpen = true;
+}
+
+Zim.prototype.close = function() {
+	this.zimFileName = "";	
+	this.zimFileOpen = false;
+}
 
 /**
   * @param directory The directory for which we want the listing
@@ -31,14 +49,13 @@ Zim.prototype.list = function(directory,successCallback, failureCallback) {
 };
 
 /**
- * @param zimFileName The zim file to use
  * @param articleTitle The title of the article to be retrieved
  * @param nameSpace	The namesepace. e.g. 'A' for article 'I' for images 
  * @param successCallback The callback which will be called when retrieving the article data is successful
  * @param failureCallback The callback which will be called when retrieving the article data encounters an error
  */
 
-Zim.prototype.getArticleData = function(zimFileName, articleTitle, nameSpace, successCallback, failureCallback) {
+Zim.prototype.getArticleData = function(articleTitle, nameSpace, successCallback, failureCallback) {
 	return PhoneGap.exec(    successCallback,    //Success callback from the plugin
 
 	      failureCallback,     //Error callback from the plugin
@@ -46,8 +63,8 @@ Zim.prototype.getArticleData = function(zimFileName, articleTitle, nameSpace, su
 	      'ZimPhoneGapPlugin',  //Tell PhoneGap to run "ZimPhoneGapPlugin" Plugin
 
 	      'getArticleData',              //Tell plugin, which action we want to perform
-	      [zimFileName,articleTitle, nameSpace]);        //Passing list of args to the plugin
-
+	      [this.zimFileName,articleTitle, nameSpace]);        //Passing list of args to the plugin
+	
 	};
 
 

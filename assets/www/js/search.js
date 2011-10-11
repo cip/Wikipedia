@@ -1,48 +1,41 @@
-function search()
-{
-	if (true) {
+function search() {
+	if (window.plugins.zim.hasZimFileOpen()) {
 		var searchParam = document.getElementById("searchParam").value;
+		console.log("In search while zim file is open: try to load article "+searchParam)
 		loadArticle(searchParam)
 	} else {
-	
-	if (hasNetworkConnection())
-	{
-		showProgressLoader("Loading", "Retrieving content from Wikipedia");
-	
-		var searchParam = document.getElementById("searchParam").value;
-		
-		var requestUrl = "http://en.wikipedia.org/w/api.php?action=opensearch&";
-		requestUrl += "search=" + encodeURIComponent(searchParam) + "&";
-		requestUrl += "format=json";
 
-		var xmlhttp;
+		if (hasNetworkConnection()) {
+			showProgressLoader("Loading", "Retrieving content from Wikipedia");
 
-		if (window.XMLHttpRequest)
-  		{// code for IE7+, Firefox, Chrome, Opera, Safari
-  			xmlhttp=new XMLHttpRequest();
-  		}
-		else
-  		{// code for IE6, IE5
-  			xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-  		}
-	
-		xmlhttp.onreadystatechange=function()
-  		{
-  			if (xmlhttp.readyState==4 && xmlhttp.status==200)
-    		{
-    			displayResults(xmlhttp.responseText);
-    		}
-  		}
+			var searchParam = document.getElementById("searchParam").value;
 
-		//xmlhttp.setRequestHeader("User-Agent", "WikipediaMobile");
-		xmlhttp.open("GET", requestUrl, true);
-		xmlhttp.send();	
-	}
-	else
-	{
-		noConnectionMsg();
-		hideOverlayDivs();
-	}
+			var requestUrl = "http://en.wikipedia.org/w/api.php?action=opensearch&";
+			requestUrl += "search=" + encodeURIComponent(searchParam) + "&";
+			requestUrl += "format=json";
+
+			var xmlhttp;
+
+			if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome,
+										// Opera, Safari
+				xmlhttp = new XMLHttpRequest();
+			} else {// code for IE6, IE5
+				xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+			}
+
+			xmlhttp.onreadystatechange = function() {
+				if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+					displayResults(xmlhttp.responseText);
+				}
+			}
+
+			// xmlhttp.setRequestHeader("User-Agent", "WikipediaMobile");
+			xmlhttp.open("GET", requestUrl, true);
+			xmlhttp.send();
+		} else {
+			noConnectionMsg();
+			hideOverlayDivs();
+		}
 	}
 }
 
