@@ -1,6 +1,6 @@
 default.properties
 local.properties
 bin/*
-/gen
+gen/*
 .svn
 /bin
