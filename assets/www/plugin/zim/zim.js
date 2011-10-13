@@ -1,13 +1,13 @@
 
 	var startTime;
-		document.addEventListener('deviceready', function() {
+		/*document.addEventListener('deviceready', function() {
 			var btn = document.getElementById("loadarticle");
 			btn.onclick = loadArticle;
 			btn.disabled = false;
 			console.log("event deviceready processed");
 			//printTags('img');
 			loadImagesFromZimFile();			
-		}, true);
+		}, true);*/
 
 		function printTags(tag) {
 			console.log("in printImageTags("+tag+")");			
@@ -71,14 +71,10 @@
 		function openZimFile() {
 			window.plugins.zim.open(document.getElementById("zimFileName").value);
 		}
-		function loadArticleOld() {
-			loadArticle(document.getElementById("articleTitle").value)
-		}
 		
 		function loadArticle(articleTitle) {
 			alert(articleTitle)
-			document.getElementById("loadarticle").disabled = true;
-			clearArticle();
+			//clearArticle();
 			showStatus("Loading article "
 					+ articleTitle
 					+ " from file: "
@@ -87,22 +83,21 @@
 			window.plugins.zim.getArticleData( articleTitle, "A",
 
 			function(r) {
-				document.getElementById("loadarticle").disabled = false;
 				showStatus("Article loaded. Render article...");
 				var loadedTime = new Date().getTime();				
 				var loadTime = loadedTime - startTime;				
 				showArticle(r);
 				var end = new Date().getTime();
 				var renderTime = end - loadedTime;
-				loadImagesFromZimFile();
+				//loadImagesFromZimFile();
 				showStatus("Article rendered. Load time: "+loadTime+"ms\n\t Render time: "+renderTime+" ms");
-				
+				hideProgressLoader();
 			},
 
 			function(e) {
-				document.getElementById("loadarticle").disabled = false;
 				showStatus("Error loading article");
 				console.log(e)
+				hideProgressLoader();
 			}
 
 			);
@@ -114,10 +109,10 @@
 		}
 
 		function clearArticle() {
-			document.getElementById("main").innerHTML = "";
+			document.getElementById("main").innerHTML = ""; // This does not work.
 		}
 		function showArticle(articleText) {
-			alert("printResult. document.getElementById(\"main\").innerHTML:"+document.getElementById("main").innerHTML);			
+			alert("printResult. document.getElementById(\"content\").innerHTML:"+document.getElementById("content").innerHTML);			
 			//document.getElementById("main").innerHTML = articleText.articletext;
 			document.getElementById("content").innerHTML = articleText.articletext;
 
