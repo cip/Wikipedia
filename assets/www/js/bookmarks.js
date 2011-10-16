@@ -5,6 +5,7 @@ function clearBookmarks()
 
 function isBookmarksMaxLimit()
 {
+	console.log("isBookmarksMaxLimit");
 	var MAX_LIMIT = 50;
 
 	var bookmarksDB = new Lawnchair({name:"bookmarksDB"}, function() {
@@ -67,14 +68,16 @@ function addBookmark(title, url)
 
 function getBookmarks()
 {
-	document.getElementById("bookmarksList").innerHTML = "";
+	//document.getElementById("bookmarksList").innerHTML = "";
+	$('#bookmarksList').html('');
 
 	var bookmarksDB = new Lawnchair({name:"bookmarksDB"}, function() {
 		this.each(function(record, index) {	
 			listBookmarks(record, index);
 		});
+		
+		
 	});
-	
 	showBookmarks();
 }
 
@@ -83,8 +86,10 @@ function showBookmarks()
 	disableOptionsMenu();
 
 	hideOverlayDivs();
-	toggleDiv("bookmarks");
+	$('#bookmarks').toggle();
 	hideContent();
+	
+	setActiveState();	
 }
 
 function hideBookmarks()
@@ -98,24 +103,23 @@ function hideBookmarks()
 function listBookmarks(record, index)
 {
 	var markup = "<div class='listItemContainer'>";
-	markup += "<div class='listItem' onclick=\"javascript:onBookmarkItemClicked(\'" + record.value + "\');\">";
-	markup += "<span class='iconBookmark'><img src='image/iconBookmark.png'/></span>";
-	markup += "<span>" + record.key + "</span>";
-	markup += "</div>";
-	markup += "<div>";
-	markup += "<span class='deleteBookmark'><a href=\"javascript:deleteBookmarkPrompt(\'" + record.key + "\');\"><img src='image/iconDelete.png'/></a></span>";
-	markup += "</div>";
+	markup += "<a class='listItem' onclick=\"javascript:onBookmarkItemClicked(\'" + record.value + "\');\">";
+	markup += "<span class='iconBookmark'></span>";
+	markup += "<span class='text deleteEnabled'>" + record.key + "</span>";
+	markup += "</a>";
+	markup += "<a class='deleteBookmark deleteButton' href=\"javascript:deleteBookmarkPrompt(\'" + record.key + "\');\"></a>";
 	markup += "</div>";
 	
-	document.getElementById("bookmarksList").innerHTML += markup;	
+	$('#bookmarksList').append(markup);	
 }
 
 function onBookmarkItemClicked(url, index)
 {
 	if (hasNetworkConnection())
 	{
-		showProgressLoader("Loading", "Retrieving content from Wikipedia");	
-		document.getElementById("main").src = url;
+		showProgressLoader(mw.message('spinner-loading').plain(),
+		                   mw.message('spinner-retrieving', mw.message('sitename').plain()).plain());
+		$('#main').attr('src', url);
 		hideOverlayDivs();
 		showContent();
 	}

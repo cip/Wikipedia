@@ -11,26 +11,33 @@ function onDeviceReady()
 	document.getElementById("content").style.display = "block";
 
     document.addEventListener("backbutton", onBackButton, false);
-    document.addEventListener("searchbutton", onSearchButton, false);
+    document.addEventListener("searchbutton", onSearchButton, false); 
     
 	loadContent();
+	setActiveState();
 }
 
 function onBackButton()
 {
-	if (document.getElementById("content").style.display == "block")
+	if ($('#content').css('display') == "block")
 	{
-		// this exits the app - not quite what we want...
-		navigator.app.exitApp();
-		// this is a phonegap 1.1.0 thing -> we need to update menu-plugin to be compatible with phonegap 1.1.0 
-		//									 before using this
-		//navigator.app.backHistory();
+		console.log("we want to go back in browser history");
+		// hmm...using the PG-Android APIs for:
+		// -navigator.app.overrideBackbutton(false); --> goes to blank screen and then exits app if pressed again...
+		// -navigator.app.backHistory(); --> exits the app instead of going back in the browser history...
+		// using the default browser history API
+		// -window.history.back(); --> exits the app instead of going back in the browser history...
+		
+		// window.history.back();
+		navigator.app.backHistory(); 
+		//navigator.app.overrideBackbutton(false);
 	}
-	
-	if (document.getElementById("bookmarks").style.display == "block" ||
-		document.getElementById("history").style.display == "block" ||
-		document.getElementById("searchresults").style.display == "block")
+
+	if ($('#bookmarks').css('display') == "block" ||
+		$('#history').css('display') == "block" ||
+		$('#searchresults').css('display') == "block")
 	{
+		console.log("overlays back");
 		enableOptionsMenu();
 		window.hideOverlayDivs();
 		window.showContent();
@@ -89,7 +96,7 @@ function loadContent()
 	{
 		showProgressLoader(mw.message('spinner-loading').plain(),
 		                   mw.message('spinner-retrieving', mw.message('sitename').plain()).plain());
-		document.getElementById("main").src = "http://en.m.wikipedia.org";
+		$('#main').attr('src', 'http://en.m.wikipedia.org');
 	}
 	else
 	{
@@ -97,57 +104,43 @@ function loadContent()
 	}
 }
 
-function toggleDiv(div)
-{
-	var display = document.getElementById(div).style.display;
-	
-	if (display == "block")
-	{
-		document.getElementById(div).style.display = "none";
-	}
-	else
-	{
-		document.getElementById(div).style.display = "block";
-	}
-}
-
 function hideOverlayDivs()
 {
-	document.getElementById("bookmarks").style.display = "none";
-	document.getElementById("history").style.display = "none";
-	document.getElementById("searchresults").style.display = "none";
+	$('#bookmarks').hide();
+	$('#history').hide();
+	$('#searchresults').hide();
 }
 
 function showContent()
 {
-	document.getElementById("mainHeader").style.display = "block";
-	document.getElementById("content").style.display = "block";
+	$('#mainHeader').show();
+	$('#content').show();
 }
 
 function hideContent()
-{
-	document.getElementById("mainHeader").style.display = "none";
-	document.getElementById("content").style.display = "none";
+{	
+	$('#mainHeader').hide();
+	$('#content').hide();
 }
 
 function checkLength()
 {
-	var searchTerm = document.getElementById("searchParam").value;
+	var searchTerm = $('#searchParam').val();
 	
 	if (searchTerm.length > 0)
 	{
-		document.getElementById("clearSearch").style.display = "block";
+		$('#clearSearch').show();
 	}
 	else
 	{
-		document.getElementById("clearSearch").style.display = "none";
+		$('#clearSearch').hide();
 	}
 }
 
 function clearSearch()
 {
-	document.getElementById("searchParam").value = "";
-	document.getElementById("clearSearch").style.display = "none";
+	$('#searchParam').val('');
+	$('#clearSearch').hide();
 }
 
 function noConnectionMsg()
@@ -184,10 +177,12 @@ function hasNetworkConnection()
 
 function disableOptionsMenu()
 {	
+/*
 	disableCommand('forward');
 	disableCommand('add bookmark');
 	
 	PGMenuElement.update();
+	*/
 }
 
 function disableCommand(commandToDisable)
@@ -206,6 +201,7 @@ function disableCommand(commandToDisable)
 
 function enableOptionsMenu()
 {
+/*
 	var commands = document.getElementsByTagName("command");
 
 	for (var i=0;i<commands.length;i++)
@@ -214,4 +210,37 @@ function enableOptionsMenu()
 	}
 	
 	PGMenuElement.update();
+	*/
+}
+
+function setActiveState() {
+	var applicableClasses = [
+		'.deleteButton',
+		'.listItem',
+		'#search',
+		'.closeButton'
+	];
+	
+	for (var key in applicableClasses) {
+		applicableClasses[key] += ':not(.activeEnabled)';
+	}
+	console.log(applicableClasses);
+	function onTouchEnd() {
+		$('.active').removeClass('active');
+		$('body').unbind('touchend', onTouchEnd);
+		$('body').unbind('touchmove', onTouchEnd);
+	}
+	
+	function onTouchStart() {		
+		$(this).addClass('active');
+		$('body').bind('touchend', onTouchEnd);
+		$('body').bind('touchmove', onTouchEnd);
+	}
+	
+	setTimeout(function() {
+		$(applicableClasses.join(',')).each(function(i) {
+			$(this).bind('touchstart', onTouchStart);
+			$(this).addClass('activeEnabled');
+		});
+	}, 500);
 }

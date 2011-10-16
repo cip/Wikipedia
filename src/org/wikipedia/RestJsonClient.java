@@ -33,25 +33,34 @@ public class RestJsonClient {
 					.getInputStream());
 			Log.d("RestJsonClient", jsonStr);
 
-			// getting data
-			JSONObject json = new JSONObject(jsonStr);
-			JSONArray geonames = json.getJSONArray("geonames");
+			// getting data and if we don't we just get out of here!
+			JSONArray geonames = null;
+			try {
+				JSONObject json = new JSONObject(jsonStr);
+				geonames = json.getJSONArray("geonames");
+			} catch (JSONException e) {
+				e.printStackTrace();
+				return null;
+			} 
 
 			for (int i = 0; i < geonames.length(); i++) {
-				JSONObject geonameObj = geonames.getJSONObject(i);
-				geoList.add(new GeoName(geonameObj
-								.getInt("elevation"), geonameObj
-								.getString("wikipediaUrl"), geonameObj
-								.getString("title"), geonameObj.getInt("rank"),
-						geonameObj.getString("summary"), geonameObj
-								.getDouble("lat"), geonameObj.getDouble("lng")));
+				try {
+					JSONObject geonameObj = geonames.getJSONObject(i);
+					geoList.add(new GeoName(
+							geonameObj.getString("wikipediaUrl"), geonameObj
+									.getString("title"), geonameObj
+									.getString("summary"), geonameObj
+									.getDouble("lat"), geonameObj
+									.getDouble("lng")));
+				} catch(JSONException e) {
+					// ignore exception and keep going!
+					e.printStackTrace();
+				}
 			}
 			return geoList;
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (JSONException e) {
 			e.printStackTrace();
 		} finally {
 			urlConnection.disconnect();

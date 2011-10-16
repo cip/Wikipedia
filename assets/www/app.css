@@ -3,7 +3,7 @@ body
 	margin:0px;
 	padding:0px;
 	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-	-webkit-focus-ring-color:  rgba(0, 0, 0, 0);
+/*	-webkit-focus-ring-color:  rgba(0, 0, 0, 0);*/
 }
 
 /* this prevents the search input field from "jumping" on the first search */
@@ -58,6 +58,7 @@ header
 
 #content
 {
+	display:block;
 	position:relative;
 	top:52px;
 }
@@ -71,70 +72,136 @@ iframe#main {
 	display: -webkit-box;
     -webkit-box-orient: horizontal;
 	whitespace: no-wrap;
-	border-bottom:1px solid #666;
+	border-bottom:1px solid #ddd;
 	width:100%;
-	padding-top:12px;
-	padding-bottom:12px;
+	position: relative;
 }
 
-.listItem
-{
-	white-space:nowrap;
-	text-overflow: ellipsis;
-	overflow: hidden;
-	margin-left:5px;
-	margin-right:5px;
+.listItem {
+	padding-top:12px;
+	padding-bottom:12px;
+	height: 22px;
+	line-height: 22px;
+	width: 100%;
+	display: block;
 }
-.iconHistory, .iconSearchResult
+
+.listItem.active, .deleteButton.active {
+	background-color: #aff6ff;
+}
+
+.iconSearchResult
 {
 	position:relative;
 	top:3px;
 	padding-right: 5px;
 }
 
-.iconBookmark
+.iconBookmark, .iconHistory
 {
-	position:relative;
-	top:5px;
-	padding-right: 5px;
+	background: url(image/spr.png) -49px -100px no-repeat;
+	background-size: 160px 160px;
+	height: 24px;
+	left: 8px;
+	position: absolute;
+	top: 10px;
+	width: 24px;
 }
 
-.deleteBookmark
+.iconHistory {
+	background-position: -102px -100px;
+}
+
+.listItem .text {
+	position: absolute;
+	left: 40px;
+	right: 16px;
+	white-space:nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+
+.listItem .text.deleteEnabled {
+	right: 58px;
+}
+
+.deleteButton
 {
 	position:absolute;
-	padding-top:3px;
-	right:5px;
+	background: url(image/spr.png) 9px -95px no-repeat;
+	background-size: 160px 160px;
+	top: 4px;
+	bottom: 4px;
+	right: 0;
+	width: 44px;
+	border-left: 1px solid #ddd;
+	
 }
 
 #search
 {
 	position: absolute;
-	top: 16px;
+	top: 8px;
 	right: 8px;
+	background: url(image/spr.png) -43px 5px no-repeat, 
+		-webkit-gradient(linear, 0% 0%, 0% 100%, from(#777), color-stop(0.25, #333));
+	background-size: 160px 160px;
+	height: 37px;
+	width: 40px;
+	border: 1px solid #333;
+	-webkit-border-radius: 0px 5px 5px 0px;
+		
+}
+
+#search.active {
+	background: url(image/spr.png) -43px 5px no-repeat, 
+		-webkit-gradient(linear, 0% 0%, 0% 100%, from(#444), color-stop(0.25, #666));
 }
 
 #searchParam
 {
 	position: absolute;
-	top: 12px;
+	height: 29px;
 	left: 45px;
 	right: 45px;
+	top: 6px;
+	-webkit-border-radius: 5px 0px 0px 5px;
+	border: none;
+	background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#ddd), color-stop(0.2, #fff), color-stop(0.8, #fff), to(#eee));
+	font-size: 18px;
+	padding: 4px 28px 2px 4px;
+	border: 1px solid #333;
+	margin: 2px;
+	z-index: 2;
+}
+
+#searchParam:focus {
+	margin: 0;
+	border: 3px solid #f86600;
 }
 
 #clearSearch
 {
 	position:fixed;
-	top:20px;
-	right:48px;
+	top:14px;
+	right:47px;
 	z-index:2;
 	display:none;
+	background: url(image/spr.png) 2px 2px no-repeat;
+	background-size: 160px 160px;
+	height: 30px;
+	width: 30px;
 }
 
 .titlebarIcon
 {
 	position: absolute;
-	top: 16px;
-	left: 8px;
+	top: 12px;
+	left: 6px;
+	background: url(image/spr.png) -99px -45px no-repeat;
+	background-size: 160px 160px;
+	height: 32px;
+	width: 34px;
 }
 
 #wHolder
@@ -154,20 +221,38 @@ iframe#main {
 {
     display: -webkit-box;
     -webkit-box-orient: horizontal;
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#4c4c4c), color-stop(100%,#131313)); /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(top, #4c4c4c 0%,#131313 100%); /* Chrome10+,Safari5.1+ */
+    background: -webkit-gradient(linear, left top, left bottom, from(#5F5F5F), to(#4F4F4F));
     padding: 5px;
-    height: 44px;
+    height: 42px;
 }
 
 .titlebar > div:first-child 
 {
     -webkit-box-flex: 1;
+	text-shadow: #222 1px 1px 1px;
+	font-size: 18px;
+	margin-left: 6px;
 }
 
 .titlebarItem
 {
 	margin-top:12px;
+}
+
+.closeButton {
+	background: url(image/spr.png) -92px 14px no-repeat;
+	background-size: 160px 160px;
+	height: 52px;
+	margin-top: 0px;
+	position: absolute;
+	right: 0px;
+	top: 0px;
+	width: 44px;
+	border-left: 1px solid #777;
+}
+
+.closeButton.active {
+	background-color: #666;
 }
 
 .titlebar div 

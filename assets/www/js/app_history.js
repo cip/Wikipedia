@@ -68,10 +68,10 @@ function getHistory()
 
 function listHistory(record, index)
 {
-	var markup = "<div class='listItemContainer' onclick=\"javascript:onHistoryItemClicked(\'" + record.value + "\');\">";
-	markup += "<div class='listItem'>";
-	markup += "<span class='iconHistory'><img src='image/iconListItem.png'/></span>";
-	markup += "<span>" + record.key + "</span>"
+	var markup = "<div class='listItemContainer'>";
+	markup += "<div class='listItem' onclick=\"javascript:onHistoryItemClicked(\'" + record.value + "\');\">";
+	markup += "<span class='iconHistory'></span>";
+	markup += "<span class='text'>" + record.key + "</span>"
 	markup += "</div>";
 	markup += "</div>";
 	
@@ -82,8 +82,9 @@ function onHistoryItemClicked(url)
 {
 	if (hasNetworkConnection())
 	{
-		showProgressLoader("Loading", "Retrieving content from Wikipedia");
-		document.getElementById("main").src = url;
+		showProgressLoader(mw.message('spinner-loading').plain(),
+		                   mw.message('spinner-retrieving', mw.message('sitename').plain()).plain());
+		$('#main').attr('src', url);
 		hideOverlayDivs();
 		showContent();
 	}
@@ -118,6 +119,7 @@ function showHistory()
 	disableOptionsMenu();
 
 	hideOverlayDivs();
-	toggleDiv("history");
+	$('#history').toggle();
 	hideContent();
+	setActiveState();
 }
