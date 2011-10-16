@@ -73,8 +73,6 @@
 		}
 		
 		function loadArticle(articleTitle) {
-			alert(articleTitle)
-			//clearArticle();
 			showStatus("Loading article "
 					+ articleTitle
 					+ " from file: "
@@ -109,13 +107,15 @@
 		}
 
 		function clearArticle() {
-			document.getElementById("main").innerHTML = ""; // This does not work.
+			document.getElementById("content").innerHTML = "";
 		}
 		function showArticle(articleText) {
 			alert("printResult. document.getElementById(\"content\").innerHTML:"+document.getElementById("content").innerHTML);			
-			//document.getElementById("main").innerHTML = articleText.articletext;
-			document.getElementById("content").innerHTML = articleText.articletext;
-
+			//document.getElementById("main").contentDocument.documentElement.innerHTML = articleText.articletext;
+			//Not working correctly, text is not wrapped.
+			document.getElementById("main").contentDocument.body.innerHTML = articleText.articletext;			
+			//Not that good because it replace the iframe, but has the benefit that text is wrapped correctly
+			//document.getElementById("content").innerHTML = articleText.articletext;
 		}
 		
 		function visible(element) {
