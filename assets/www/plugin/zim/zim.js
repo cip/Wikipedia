@@ -71,6 +71,8 @@
 		function hideZimContent() {
 			//Probably not sufficient for all cases.
 			$('#zimContent').hide();			
+			$('#zimStatus').hide();
+			$('#zimFileName').hide();
 			$('#content').show();
 			
 		}
@@ -79,7 +81,9 @@
 			$('#content').hide();
 			//Only hide main content, but not the header
 			// as also used for zim searching
-			$('#zimContent').show();			
+			$('#zimContent').show();
+			$('#zimStatus').show();
+			$('#zimFileName').show();
 		}
 		
 		function openZimFile() {
@@ -89,6 +93,8 @@
 		
 		function loadArticle(articleTitle) {
 			clearArticle();
+			//Hide zimfile name after first load.
+			$('#zimFileName').hide();			
 			showStatus("Loading article "
 					+ articleTitle
 					+ " from file: "
@@ -104,7 +110,9 @@
 				var end = new Date().getTime();
 				var renderTime = end - loadedTime;
 				//loadImagesFromZimFile();
-				showStatus("Article rendered. Load time: "+loadTime+"ms\n\t Render time: "+renderTime+" ms");
+				// A little useless, as hiden in next. (but at least printed to console)
+				showStatus("Article rendered. Load time: "+loadTime+"ms\n\t Render time: "+renderTime+" ms");			
+				$("#zimStatus").hide();
 				$('#search').removeClass('inProgress');			    
 			},
 
@@ -134,12 +142,14 @@
 		}
 		
 		function showStatus(status) {
-			document.getElementById("status").innerHTML = status;
+			console.log("showStatus. status: "+status)
+			$("#zimStatus").html(status);
+			$("#zimStatus").show();
 		}
 
 		function clearArticle() {
 			$("#zimContent").html("");			
-			
+			$("#zimStatus").hide();
 		}
 		function showArticle(articleText) {
 			
@@ -148,7 +158,7 @@
 			// not wrapped. Reason is probably that zim content currently is not a full html page
 			// Note: There are plans to support getting a full html page (content+template) in the
 			// future may make sense to change this here again to use the/an iframe.
-			$("#zimContent").html(articleText.articletext);			
+			$("#zimContent").html(articleText.articletext);
 			$("#zimContent a").click(function(event){
  				 var target = $(this).attr('href');
 				 console.log("Link in offline article clicked. Link URL: " +target)

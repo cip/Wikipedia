@@ -63,6 +63,17 @@ header
 	top:52px;
 }
 
+
+#zim {
+	display:block;
+	position:relative;
+	top:52px;
+}
+
+#zimStatus {
+	display:none;	
+}
+
 #zimFileName {
 	display:none;	
 }
