@@ -89,6 +89,7 @@
 		function openZimFile() {
 			window.plugins.zim.open(document.getElementById("zimFileName").value);
 			showZimContent();
+			showStatus("Use search field to open articles in zim file defined above")
 		}
 		
 		function loadArticle(articleTitle) {
