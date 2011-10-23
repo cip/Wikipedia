@@ -35,6 +35,7 @@ function search() {
 		noConnectionMsg();
 		hideOverlayDivs();
 	}
+	}
 }
 
 function displayResults(results) {
