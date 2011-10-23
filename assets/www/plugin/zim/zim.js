@@ -94,11 +94,27 @@
 
 			function(e) {
 				showStatus("Error loading article");
-				console.log(e)
-				hideProgressLoader();
+				console.log(e);
+				$('#search').removeClass('inProgress');				
 			}
 
 			);
+		}
+		
+		function isLinkInSameArticle(url) {
+			if (url.indexOf("#")==0)
+				//Try whether works without reloading
+				return 1;			
+			return 0;
+		}
+		
+		function isExternalLink(url) {
+			if  (url.indexOf("http://") == 0) {
+				return 1;
+			} else if (url.indexOf("https://") == 0) {
+				return 1;
+			}
+			return 0;
 		}
 		
 		function showStatus(status) {
@@ -117,10 +133,31 @@
 			//document.getElementById("content").innerHTML = articleText.articletext;
 			$("a",document.getElementById("main").contentDocument).click(function(event){
  				 var target = $(this).attr('href');
-				 alert("As you can see, the link no longer took you to jquery.com: " + target);
-			     event.preventDefault();
+				 console.log("Link in offline article clicked. Link URL: " +target)
+				 if (isExternalLink(target)) {
+					 console.log("Link appears to be external link. Open in broswer")
+					 // Stop the link from opening in the iframe...
+					 event.preventDefault();
+					 
+					 // And open it in parent context for reals.
+					 //
+					 // This seems to successfully launch the native browser, and works
+					 // both with the stock browser and Firefox as user's default browser
+					 document.location = target;
+					 
+						
+				 } else if (isLinkInSameArticle(target)) {
+					 console.log("Link appears to be link to already open article. Use default handling")
+				 } else {
+					 console.log("Link appears to be zim internal.\n" +
+						 		"Try opening article from zim file. Url: " + target)
+					 event.preventDefault();					 
+					 loadArticle(target)		     
+				 }
+ 				 
+				 
 			   });
-		}
+		}		
 		
 		function visible(element) {
 			  if (element.offsetWidth === 0 || element.offsetHeight === 0) return false;
