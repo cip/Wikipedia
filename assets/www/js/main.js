@@ -1,246 +1,193 @@
-function init() 
-{
+var currentHistoryIndex = 0;
+
+function init() {
     document.addEventListener("deviceready", onDeviceReady, true);
 }
 
-function onDeviceReady()
-{
-	// some reason the android browser is not recognizing the style=block when set in the CSS
-	// it only seems to recognize the style when dynamically set here or when set inline...
-	// the style needs to be explicitly set for logic used in the backButton handler
-	document.getElementById("content").style.display = "block";
+function onDeviceReady() {
+  // some reason the android browser is not recognizing the style=block when set in the CSS
+  // it only seems to recognize the style when dynamically set here or when set inline...
+  // the style needs to be explicitly set for logic used in the backButton handler
+  $('#content').css('display', 'block');
 
-    document.addEventListener("backbutton", onBackButton, false);
-    document.addEventListener("searchbutton", onSearchButton, false); 
+  document.addEventListener("backbutton", onBackButton, false);
+  document.addEventListener("searchbutton", onSearchButton, false); 
+  
+  // this has to be set for the window.history API to work properly
+  PhoneGap.UsePolling = true;
     
-	loadContent();
-	setActiveState();
+  loadContent();
+  setActiveState();
 }
 
-function onBackButton()
-{
-	if ($('#content').css('display') == "block")
-	{
-		console.log("we want to go back in browser history");
-		// hmm...using the PG-Android APIs for:
-		// -navigator.app.overrideBackbutton(false); --> goes to blank screen and then exits app if pressed again...
-		// -navigator.app.backHistory(); --> exits the app instead of going back in the browser history...
-		// using the default browser history API
-		// -window.history.back(); --> exits the app instead of going back in the browser history...
-		
-		// window.history.back();
-		navigator.app.backHistory(); 
-		//navigator.app.overrideBackbutton(false);
-	}
+function onBackButton() {
+  console.log('currentHistoryIndex '+currentHistoryIndex + ' history length '+history.length);
 
-	if ($('#bookmarks').css('display') == "block" ||
-		$('#history').css('display') == "block" ||
-		$('#searchresults').css('display') == "block")
-	{
-		console.log("overlays back");
-		enableOptionsMenu();
-		window.hideOverlayDivs();
-		window.showContent();
-	}
+  if ($('#content').css('display') == "block") {
+    currentHistoryIndex -= 1;
+    $('#search').addClass('inProgress');
+    window.history.go(-1);
+    if(currentHistoryIndex <= 0) {
+      console.log("no more history to browse exiting...");
+      navigator.app.exitApp();
+    }
+  }
+
+    if ($('#bookmarks').css('display') == "block" || $('#history').css('display') == "block" || 
+        $('#searchresults').css('display') == "block" || $('#settings').css('display') == "block") {
+    window.hideOverlayDivs();
+    window.showContent();
+  }
 }
 
-function onSearchButton()
-{
-	//hmmm...doesn't seem to set the cursor in the input field - maybe a browser bug???
-	$('#searchParam').focus();
-	
-	plugins.SoftKeyBoard.show();
+function onSearchButton() {
+  //hmmm...doesn't seem to set the cursor in the input field - maybe a browser bug???
+  $('#searchParam').focus();
+  plugins.SoftKeyBoard.show();
 }
 
-function showProgressLoader(title, message)
-{
-	PhoneGap.exec(null, null, "IndeterminateProgress", "progressStart", [title, message]);
+function hideMobileLinks() {
+  var frameDoc = $("#main")[0].contentDocument;
+  $('#header', frameDoc).css('display', 'none');
+  $('#footmenu', frameDoc).css('display', 'none');
+
+  // Internal links
+  $('a[href^="/wiki/"]', frameDoc).click(function(e) {
+    $('#search').addClass('inProgress');
+    currentHistoryIndex += 1;
+  });
+
+  // External links
+  $('a.external, a.extiw', frameDoc).click(function(event) {
+    var target = $(this).attr('href');
+
+    // Stop the link from opening in the iframe...
+    event.preventDefault();
+
+    // And open it in parent context for reals.
+    //
+    // This seems to successfully launch the native browser, and works
+    // both with the stock browser and Firefox as user's default browser
+    document.location = target;
+  });
 }
 
-function hideProgressLoader()
-{
-	PhoneGap.exec(null, null, "IndeterminateProgress", "progressStop", []);
-}
-
-function hideMobileLinks()
-{
-	var frameDoc = document.getElementById("main").contentDocument;
-	frameDoc.getElementById("header").style.display = "none";
-	frameDoc.getElementById("footmenu").style.display = "none";
-	$('a.external, a.extiw', frameDoc).click(function(event) {
-		var target = $(this).attr('href');
-
-		// Stop the link from opening in the iframe...
-		event.preventDefault();
-
-		// And open it in parent context for reals.
-		//
-		// This seems to successfully launch the native browser, and works
-		// both with the stock browser and Firefox as user's default browser
-		document.location = target;
-	});
-}
-
-function iframeOnLoaded()
-{
-	// scroll the page to the top after it loads
-	window.scroll(0,0);
-	hideMobileLinks();
-	addToHistory();
-	hideProgressLoader();
+function iframeOnLoaded(iframe) {
+  if(iframe.src) {
+    window.scroll(0,0);
+    hideMobileLinks();
+    toggleForward();
+    addToHistory();
+    $('#search').removeClass('inProgress');
+    console.log('currentHistoryIndex '+currentHistoryIndex + ' history length '+history.length);
+  }
 }
 
 function loadContent() 
 {
-	if (hasNetworkConnection())
-	{
-		showProgressLoader(mw.message('spinner-loading').plain(),
-		                   mw.message('spinner-retrieving', mw.message('sitename').plain()).plain());
-		$('#main').attr('src', 'http://en.m.wikipedia.org');
-	}
-	else
-	{
-		noConnectionMsg();
-	}
+    $('#search').addClass('inProgress');
+    $.ajax({url: "http://en.m.wikipedia.org",
+            success: function(data) {
+              if(data) {
+                $('#main').attr('src', 'http://en.m.wikipedia.org');
+                currentHistoryIndex += 1;
+              } else {
+                noConnectionMsg();
+                navigator.app.exitApp();
+              }
+            },
+            error: function(xhr) {
+              noConnectionMsg();
+            },
+            timeout: 3000
+         });
 }
 
-function hideOverlayDivs()
-{
-	$('#bookmarks').hide();
-	$('#history').hide();
-	$('#searchresults').hide();
+function hideOverlayDivs() {
+  $('#bookmarks').hide();
+  $('#history').hide();
+  $('#searchresults').hide();
+  $('#settings').hide();
 }
 
-function showContent()
-{
-	$('#mainHeader').show();
-	$('#content').show();
+function showContent() {
+  $('#mainHeader').show();
+  $('#content').show();
 }
 
-function hideContent()
-{	
-	$('#mainHeader').hide();
-	$('#content').hide();
+function hideContent() {  
+  $('#mainHeader').hide();
+  $('#content').hide();
 }
 
-function checkLength()
-{
-	var searchTerm = $('#searchParam').val();
-	
-	if (searchTerm.length > 0)
-	{
-		$('#clearSearch').show();
-	}
-	else
-	{
-		$('#clearSearch').hide();
-	}
+function checkLength() {
+  var searchTerm = $('#searchParam').val();
+  
+  if (searchTerm.length > 0) {
+    $('#clearSearch').show();
+  }else{
+    $('#clearSearch').hide();
+  }
 }
 
-function clearSearch()
-{
-	$('#searchParam').val('');
-	$('#clearSearch').hide();
+function clearSearch() {
+  $('#searchParam').val('');
+  $('#clearSearch').hide();
 }
 
-function noConnectionMsg()
-{
-	alert("Please try again when you're connected to a network.");
+function noConnectionMsg() {
+  alert("Please try again when you're connected to a network.");
+}
+
+function toggleForward() {
+    currentHistoryIndex < window.history.length ?
+    $('#forwardCmd').attr('disabled', 'false') :
+    $('#forwardCmd').attr('disabled', 'true');
+
+    console.log('Forward command disabled '+$('#forwardCmd').attr('disabled')); 
+    window.plugins.SimpleMenu.loadMenu($('#appMenu')[0], 
+                                       function(success) {console.log(success);},
+                                       function(error) {console.log(error);});
+}
+
+function goForward() {
+    $('#search').addClass('inProgress');
+    window.history.go(1);
 }
 
 function hasNetworkConnection() 
 {
-    var networkState = navigator.network.connection.type;
-	
-	/*
-    var states = {};
-    states[Connection.UNKNOWN]  = 'Unknown connection';
-    states[Connection.ETHERNET] = 'Ethernet connection';
-    states[Connection.WIFI]     = 'WiFi connection';
-    states[Connection.CELL_2G]  = 'Cell 2G connection';
-    states[Connection.CELL_3G]  = 'Cell 3G connection';
-    states[Connection.CELL_4G]  = 'Cell 4G connection';
-    states[Connection.NONE]     = 'No network connection';
-
-	//alert('Connection type: ' + states[networkState]);
-	*/
-	
-	if (networkState == Connection.NONE)
-	{
-		return false;
-	}
-	else
-	{
-		return true;
-	}
-}
-
-function disableOptionsMenu()
-{	
-/*
-	disableCommand('forward');
-	disableCommand('add bookmark');
-	
-	PGMenuElement.update();
-	*/
-}
-
-function disableCommand(commandToDisable)
-{
-	var commands = document.getElementsByTagName("command");
-
-	for (var i=0;i<commands.length;i++)
-	{
-		if (commands[i].getAttribute('label').toLowerCase() == commandToDisable)
-		{
-			commands[i].setAttribute('disabled', 'true');
-			return;
-		}
-	}
-}
-
-function enableOptionsMenu()
-{
-/*
-	var commands = document.getElementsByTagName("command");
-
-	for (var i=0;i<commands.length;i++)
-	{
-		commands[i].setAttribute('disabled', 'false');
-	}
-	
-	PGMenuElement.update();
-	*/
+    return navigator.network.connection.type == Connection.NONE ? false : true;
 }
 
 function setActiveState() {
-	var applicableClasses = [
-		'.deleteButton',
-		'.listItem',
-		'#search',
-		'.closeButton'
-	];
-	
-	for (var key in applicableClasses) {
-		applicableClasses[key] += ':not(.activeEnabled)';
-	}
-	console.log(applicableClasses);
-	function onTouchEnd() {
-		$('.active').removeClass('active');
-		$('body').unbind('touchend', onTouchEnd);
-		$('body').unbind('touchmove', onTouchEnd);
-	}
-	
-	function onTouchStart() {		
-		$(this).addClass('active');
-		$('body').bind('touchend', onTouchEnd);
-		$('body').bind('touchmove', onTouchEnd);
-	}
-	
-	setTimeout(function() {
-		$(applicableClasses.join(',')).each(function(i) {
-			$(this).bind('touchstart', onTouchStart);
-			$(this).addClass('activeEnabled');
-		});
-	}, 500);
+  var applicableClasses = [
+    '.deleteButton',
+    '.listItem',
+    '#search',
+    '.closeButton'
+  ];
+  
+  for (var key in applicableClasses) {
+    applicableClasses[key] += ':not(.activeEnabled)';
+  }
+  console.log(applicableClasses);
+  function onTouchEnd() {
+    $('.active').removeClass('active');
+    $('body').unbind('touchend', onTouchEnd);
+    $('body').unbind('touchmove', onTouchEnd);
+  }
+  
+  function onTouchStart() {   
+    $(this).addClass('active');
+    $('body').bind('touchend', onTouchEnd);
+    $('body').bind('touchmove', onTouchEnd);
+  }
+  
+  setTimeout(function() {
+    $(applicableClasses.join(',')).each(function(i) {
+      $(this).bind('touchstart', onTouchStart);
+      $(this).addClass('activeEnabled');
+    });
+  }, 500);
 }

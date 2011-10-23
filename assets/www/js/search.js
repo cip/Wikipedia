@@ -1,24 +1,24 @@
-function search()
-{
-
+function search() {
+  if($('#search').hasClass('inProgress')) {
+    window.frames[0].stop();
+    $('#search').removeClass('inProgress');
+    return;
+  }
 	if (window.plugins.zim.hasZimFileOpen()) {
 		var searchParam = document.getElementById("searchParam").value;
 		console.log("In search while zim file is open: try to load article "+searchParam)
 		showProgressLoader("Loading", "Retrieving content from Offline Wikipedia");		
 		loadArticle(searchParam)		
 	} else {
-	if (hasNetworkConnection())
-	{
+	if (hasNetworkConnection()) {
 		var searchParam = $('#searchParam').val();
 	
-		if (searchParam == '')
-		{
+		if (searchParam == '') {
 			hideOverlayDivs();
 			return;
 		}
 		
-		showProgressLoader(mw.message('spinner-loading').plain(),
-		                   mw.message('spinner-retrieving', mw.message('sitename').plain()).plain());
+    $('#search').addClass('inProgress');
 		                   
 		var requestUrl = "http://en.wikipedia.org/w/api.php?action=opensearch&";
 		requestUrl += "search=" + encodeURIComponent(searchParam) + "&";
@@ -31,49 +31,39 @@ function search()
 				displayResults(data);
 			}
 		});
-	}
-	else
-	{
+	}else{
 		noConnectionMsg();
 		hideOverlayDivs();
 	}
 }
-}
 
-function displayResults(results)
-{
+function displayResults(results) {
 	var formattedResults = "";
 	
-	if (results != null)
-	{
+	if (results != null) {
 		results = eval(results);
 	
-		if (results.length > 0)
-		{
+		if (results.length > 0) {
 			var searchParam = results[0];
 			var searchResults = results[1];
 		
-			for (var i=0;i<searchResults.length;i++)
-			{
+			for (var i=0;i<searchResults.length;i++) {
 				var article = searchResults[i];
 				
-				if (article.toLowerCase() == $('#searchParam').val().toLowerCase())
-				{
+				if (article.toLowerCase() == $('#searchParam').val().toLowerCase()) {
 					goToResult(article);
 					return;
 				}
 				
 				formattedResults += "<div class='listItemContainer' onclick=\"javascript:goToResult(\'" + article + "\');\">";
 				formattedResults += "<div class='listItem'>";
-				formattedResults += "<span class='iconSearchResult'><img src='image/iconListItem.png'/></span>";
-				formattedResults += "<span>" + article + "</span>";
+				formattedResults += "<span class='iconSearchResult'></span>";
+				formattedResults += "<span class='text'>" + article + "</span>";
 				formattedResults += "</div>";
 				formattedResults += "</div>";
 			}
 		}
-	}
-	else
-	{
+	}else{
 		formattedResults += "nothingness...";
 	}
 	
@@ -88,29 +78,21 @@ function displayResults(results)
 	$('#searchresults').show();
 	$('#content').hide();
 	
-	hideProgressLoader();
 }
 
-function goToResult(article)
-{
-	if (hasNetworkConnection())
-	{
-		showProgressLoader(mw.message('spinner-loading').plain(),
-						   mw.message('spinner-retrieving', mw.message('sitename').plain()).plain());
+function goToResult(article) {
+	if (hasNetworkConnection()) {
+    $('#search').addClass('inProgress');
 		var url = "http://en.wikipedia.org/wiki/" + article;	
 		$('#main').attr('src', url);
 		hideOverlayDivs();
 		showContent();
-	}
-	else
-	{
+	}else{
 		noConnectionMsg();
 	}
 }
 
-function hideSearchResults()
-{
+function hideSearchResults() {
 	hideOverlayDivs();
 	showContent();
 }
-
