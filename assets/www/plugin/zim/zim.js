@@ -101,7 +101,6 @@
 			);
 		}
 		
-
 		function showStatus(status) {
 			document.getElementById("status").innerHTML = status;
 		}
@@ -110,12 +109,17 @@
 			document.getElementById("content").innerHTML = "";
 		}
 		function showArticle(articleText) {
-			alert("printResult. document.getElementById(\"content\").innerHTML:"+document.getElementById("content").innerHTML);			
+			alert("printResult. document.getElementById(\"content\").innerHTML:"+document.getElementById("content").innerHTML);
 			//document.getElementById("main").contentDocument.documentElement.innerHTML = articleText.articletext;
 			//Not working correctly, text is not wrapped.
 			document.getElementById("main").contentDocument.body.innerHTML = articleText.articletext;			
 			//Not that good because it replace the iframe, but has the benefit that text is wrapped correctly
 			//document.getElementById("content").innerHTML = articleText.articletext;
+			$("a",document.getElementById("main").contentDocument).click(function(event){
+ 				 var target = $(this).attr('href');
+				 alert("As you can see, the link no longer took you to jquery.com: " + target);
+			     event.preventDefault();
+			   });
 		}
 		
 		function visible(element) {
