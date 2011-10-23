@@ -89,7 +89,7 @@
 				var renderTime = end - loadedTime;
 				//loadImagesFromZimFile();
 				showStatus("Article rendered. Load time: "+loadTime+"ms\n\t Render time: "+renderTime+" ms");
-				hideProgressLoader();
+				$('#search').removeClass('inProgress');			    
 			},
 
 			function(e) {

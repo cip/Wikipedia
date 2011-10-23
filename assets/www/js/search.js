@@ -7,7 +7,7 @@ function search() {
 	if (window.plugins.zim.hasZimFileOpen()) {
 		var searchParam = document.getElementById("searchParam").value;
 		console.log("In search while zim file is open: try to load article "+searchParam)
-		showProgressLoader("Loading", "Retrieving content from Offline Wikipedia");		
+		$('#search').addClass('inProgress');		
 		loadArticle(searchParam)		
 	} else {
 	if (hasNetworkConnection()) {
