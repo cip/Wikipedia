@@ -63,6 +63,16 @@ header
 	top:52px;
 }
 
+#zimFileName {
+	display:none;	
+}
+
+#zimContent {
+	display:none;
+}
+
+
+
 iframe#main {
 	width:100%;
 }

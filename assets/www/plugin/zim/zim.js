@@ -68,11 +68,27 @@
 			}			 
 		}
 		
+		function hideZimContent() {
+			//Probably not sufficient for all cases.
+			$('#zimContent').hide();			
+			$('#content').show();
+			
+		}
+		
+		function showZimContent() {
+			$('#content').hide();
+			//Only hide main content, but not the header
+			// as also used for zim searching
+			$('#zimContent').show();			
+		}
+		
 		function openZimFile() {
 			window.plugins.zim.open(document.getElementById("zimFileName").value);
+			showZimContent();
 		}
 		
 		function loadArticle(articleTitle) {
+			clearArticle();
 			showStatus("Loading article "
 					+ articleTitle
 					+ " from file: "
@@ -122,16 +138,18 @@
 		}
 
 		function clearArticle() {
-			document.getElementById("content").innerHTML = "";
+			$("#zimContent").html("");			
+			
 		}
 		function showArticle(articleText) {
-			alert("printResult. document.getElementById(\"content\").innerHTML:"+document.getElementById("content").innerHTML);
-			//document.getElementById("main").contentDocument.documentElement.innerHTML = articleText.articletext;
-			//Not working correctly, text is not wrapped.
-			document.getElementById("main").contentDocument.body.innerHTML = articleText.articletext;			
-			//Not that good because it replace the iframe, but has the benefit that text is wrapped correctly
-			//document.getElementById("content").innerHTML = articleText.articletext;
-			$("a",document.getElementById("main").contentDocument).click(function(event){
+			
+			console.log("Openend article from zimefile. Display article text.")
+			//Basically could reuse the "main" iframe as well. Problem is that then text is
+			// not wrapped. Reason is probably that zim content currently is not a full html page
+			// Note: There are plans to support getting a full html page (content+template) in the
+			// future may make sense to change this here again to use the/an iframe.
+			$("#zimContent").html(articleText.articletext);			
+			$("#zimContent a").click(function(event){
  				 var target = $(this).attr('href');
 				 console.log("Link in offline article clicked. Link URL: " +target)
 				 if (isExternalLink(target)) {
@@ -143,8 +161,7 @@
 					 //
 					 // This seems to successfully launch the native browser, and works
 					 // both with the stock browser and Firefox as user's default browser
-					 document.location = target;
-					 
+					 document.location = target; 
 						
 				 } else if (isLinkInSameArticle(target)) {
 					 console.log("Link appears to be link to already open article. Use default handling")
