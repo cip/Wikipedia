@@ -6,6 +6,7 @@ package com.trial.phonegap.plugin.zim;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
 
 import org.json.JSONArray;
 
@@ -56,10 +57,11 @@ public class ZimPhoneGapPlugin extends Plugin {
 				String articleTitle = data.getString(1);
 				
 				String nameSpace = data.getString(2);
+				boolean isUrl = data.getBoolean(3);
 				if (nameSpace.length()!=  1) {
 					throw new JSONException("nameSpace parameter is not a char");
 				}
-				JSONObject articleData = getArticleData(zimFileName,articleTitle,nameSpace.charAt(0));
+				JSONObject articleData = getArticleData(zimFileName,articleTitle,nameSpace.charAt(0), isUrl);
 				if (articleData.isNull("articletext")) {
 					throw new JSONException("Article "+articleTitle+ " not found in namespace "+ nameSpace + " in file "+zimFileName);
 				}
@@ -88,22 +90,35 @@ public class ZimPhoneGapPlugin extends Plugin {
 
 		return result;
 	}
-	private JSONObject getArticleData(String zimFileName, String articleTitle, char nameSpace) throws JSONException {
+	private JSONObject getArticleData(String zimFileName, String article, char nameSpace, boolean isUrl) throws JSONException {
 		JSONObject articleData = new JSONObject();
         File zimFile = new File(zimFileName);
         ZIMFile file = new ZIMFile(zimFileName);
 		// Associate the Zim File with a Reader
 		ZIMReader zReader = new ZIMReader(file);
 
-		//FIXME: For now just remove baseuri when loading images.  
-		articleTitle = articleTitle.replaceFirst("file:///I/","");
+		if (isUrl) {
+			String articleTitle = URLDecoder.decode(article);
+			//Note that it still does not work, as appearantly the java zimlib does not handle unicode correctly.
+			// A second problem is probably that zimreader always uses the title pointer list to find an article,
+			// this won't work if urls and title are different.
+			Log.d("zimgap", " getArticleData isUrl was true. article " +article+" decoded to title "+articleTitle);		
+			article = articleTitle;
+			
+			//FIXME: For now just remove baseuri when loading images.(Should in general remove namespace
+			// part of url)
+			
+			article = article.replaceFirst("file:///I/","");
+			
+			
+		}
 		
 		try {
 			
-			ByteArrayOutputStream articleDataByteArray = zReader.getArticleData(articleTitle,nameSpace);
+			ByteArrayOutputStream articleDataByteArray = zReader.getArticleData(article,nameSpace);
 			Log.d("zimgap","zReader.getArticleData(articleTitle,nameSpace) done");
 			if (articleDataByteArray==null) {
-				Log.w("zimgap", "Article \""+articleTitle+"\" not found");
+				Log.w("zimgap", "Article \""+article+"\" not found");
 			} else {
 				String articleText = null;
 				if (nameSpace=='A') {
@@ -117,9 +132,9 @@ public class ZimPhoneGapPlugin extends Plugin {
 					throw new JSONException("nameSpace "+nameSpace+ " not supported.");
 				}
 				articleData.put("articletext", articleText);
-				articleData.put("articletitle", articleTitle);
+				articleData.put("articletitle", article);
 				//Working: articleData.put("articletext", "data:image/gif;base64,R0lGODlhUAAPAKIAAAsLav///88PD9WqsYmApmZmZtZfYmdakyH5BAQUAP8ALAAAAABQAA8AAAPbWLrc/jDKSVe4OOvNu/9gqARDSRBHegyGMahqO4R0bQcjIQ8E4BMCQc930JluyGRmdAAcdiigMLVrApTYWy5FKM1IQe+Mp+L4rphz+qIOBAUYeCY4p2tGrJZeH9y79mZsawFoaIRxF3JyiYxuHiMGb5KTkpFvZj4ZbYeCiXaOiKBwnxh4fnt9e3ktgZyHhrChinONs3cFAShFF2JhvCZlG5uchYNun5eedRxMAF15XEFRXgZWWdciuM8GCmdSQ84lLQfY5R14wDB5Lyon4ubwS7jx9NcV9/j5+g4JADs=");	
-				Log.d("zimgap","Article \""+articleTitle+"\" read successfully");
+				Log.d("zimgap","Article \""+article+"\" read successfully");
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

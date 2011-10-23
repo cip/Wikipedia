@@ -49,13 +49,14 @@ Zim.prototype.list = function(directory,successCallback, failureCallback) {
 };
 
 /**
- * @param articleTitle The title of the article to be retrieved
- * @param nameSpace	The namesepace. e.g. 'A' for article 'I' for images 
+ * @param article The title url (see isUrl paramter) of the article to be retrieved
+ * @param nameSpace	The namesepace. e.g. 'A' for article 'I' for images
+ * @param isUrl true if article is an url, false if it as title
  * @param successCallback The callback which will be called when retrieving the article data is successful
  * @param failureCallback The callback which will be called when retrieving the article data encounters an error
  */
 
-Zim.prototype.getArticleData = function(articleTitle, nameSpace, successCallback, failureCallback) {
+Zim.prototype.getArticleData = function(article, nameSpace, isUrl, successCallback, failureCallback) {
 	return PhoneGap.exec(    successCallback,    //Success callback from the plugin
 
 	      failureCallback,     //Error callback from the plugin
@@ -63,7 +64,7 @@ Zim.prototype.getArticleData = function(articleTitle, nameSpace, successCallback
 	      'ZimPhoneGapPlugin',  //Tell PhoneGap to run "ZimPhoneGapPlugin" Plugin
 
 	      'getArticleData',              //Tell plugin, which action we want to perform
-	      [this.zimFileName,articleTitle, nameSpace]);        //Passing list of args to the plugin
+	      [this.zimFileName,article, nameSpace, isUrl]);        //Passing list of args to the plugin
 	
 	};
 

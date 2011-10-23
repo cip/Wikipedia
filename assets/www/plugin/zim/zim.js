@@ -36,7 +36,7 @@
 				// if (visible(imgs[i])) {
 					console.log("Image ("+imgs[i].src+") is visible. Load it from zimfile");
 				 	window.plugins.zim.getArticleData( 
-				 			imgs[i].src, "I",
+				 			imgs[i].src, "I", true,
 
 			function(r) {				 		
 				console.log("Image "+r.articletitle+ " loaded. Find image element...");						
@@ -92,7 +92,8 @@
 			showStatus("Use search field to open articles in zim file defined above")
 		}
 		
-		function loadArticle(articleTitle) {
+		
+		function loadArticle(articleTitle, isUrl) {
 			clearArticle();
 			//Hide zimfile name after first load.
 			$('#zimFileName').hide();			
@@ -101,7 +102,7 @@
 					+ " from file: "
 					+ window.plugins.zim.zimFileName);
 			var startTime = new Date().getTime();			
-			window.plugins.zim.getArticleData( articleTitle, "A",
+			window.plugins.zim.getArticleData( articleTitle, "A", isUrl,
 
 			function(r) {
 				showStatus("Article loaded. Render article...");
@@ -180,7 +181,7 @@
 					 console.log("Link appears to be zim internal.\n" +
 						 		"Try opening article from zim file. Url: " + target)
 					 event.preventDefault();					 
-					 loadArticle(target)		     
+					 loadArticle(target, true)		     
 				 }
  				 
 				 

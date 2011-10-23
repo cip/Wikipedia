@@ -8,7 +8,7 @@ function search() {
 		var searchParam = document.getElementById("searchParam").value;
 		console.log("In search while zim file is open: try to load article "+searchParam)
 		$('#search').addClass('inProgress');		
-		loadArticle(searchParam)		
+		loadArticle(searchParam, false)		
 	} else {
 	if (hasNetworkConnection()) {
 		var searchParam = $('#searchParam').val();
