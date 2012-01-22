@@ -37,6 +37,7 @@ window.app = function() {
 		network.makeRequest({
 			url: url, 
 			success: function(data) {
+                    console.log("loadPage success");
 					chrome.renderHtml(data, origUrl);
 					if(callback) {
 						callback();
@@ -44,6 +45,7 @@ window.app = function() {
 					chrome.onPageLoaded();
 				},
 			error: function(xhr) {
+                console.log("loadPage error:"+xhr);
 				if(xhr.status == 404) {
 					loadLocalPage('404.html');
 				} else {
@@ -59,7 +61,7 @@ window.app = function() {
 	}
 
 	function loadLocalPage(page) {
-		$('base').attr('href', 'file:///android_asset/www/');
+        $('base').attr('href', 'file:///android_asset/www/');
 		$('#main').load(page, function() {
 			$('#main').localize();
 			chrome.onPageLoaded();
@@ -72,7 +74,7 @@ window.app = function() {
 
 	function setContentLanguage(language) {
 		preferencesDB.set('language', language);
-		app.baseURL = 'https://' + language + '.m.wikipedia.org';
+        app.baseURL = 'http://' + language + '.m.wikipedia.org';
 	}
 
 	function setFontSize(size) {

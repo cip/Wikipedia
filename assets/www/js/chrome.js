@@ -81,7 +81,7 @@ window.chrome = function() {
 		//PhoneGap.UsePolling = true;
 
 		preferencesDB.initializeDefaults(function() { 
-			app.baseURL = 'https://' + preferencesDB.get('language') + '.m.wikipedia.org';
+			app.baseURL = 'http://' + preferencesDB.get('language') + '.m.wikipedia.org';
 			l10n.initLanguages();
 
 			$(".titlebarIcon").bind('touchstart', function() {
