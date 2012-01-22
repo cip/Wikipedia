@@ -15,12 +15,18 @@ if (ua.match(/; Android /)) {
 	// Mozilla/5.0 (iPhone Simulator; U; CPU iPhone OS 4_3_2 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Mobile/8H7
 	platform = 'ios';
 }
+//FIXME
+platform  = "qt"
 
 if (platform == 'unknown') {
 	// Assume we're a generic web browser.
-	platform = 'web';
+	platform = 'web'; 
 } else {
-	includes.push('phonegap-1.3.0.js');
+    if (platform=='qt') {
+        includes.push('phonegap.js');
+    } else {
+        includes.push('phonegap-1.3.0.js');
+    }
 	var plugins = {
 		android: [
 			'menu/menu.android.js',
@@ -34,6 +40,9 @@ if (platform == 'unknown') {
 		ios: [
 			'ActionSheet.js'
 		],
+        qt: [
+
+        ]
 	};
 	if (platform in plugins) {
 		$.each(plugins[platform], function(i, path) {
@@ -45,6 +54,7 @@ if (platform == 'unknown') {
 function includePlatformFile(name) {
 	var path = platform + '/' + name,
 		line = '<script type="text/javascript" charset="utf-8" src="' + path + '"></script>';
+    console.log(line);
 	document.writeln(line);
 }
 
