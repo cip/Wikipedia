@@ -24,6 +24,7 @@ if (platform == 'unknown') {
 } else {
     if (platform=='qt') {
         includes.push('phonegap.js');
+        includes.push('phonegap.qt.js');
     } else {
         includes.push('phonegap-1.3.0.js');
     }
