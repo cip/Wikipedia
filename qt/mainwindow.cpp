@@ -19,11 +19,18 @@
 
 #include <QtCore/QCoreApplication>
 
+#include <QDebug>
+#include <QSslError>
+#include <QNetworkReply>
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
+    connect(ui->webView->page()->networkAccessManager(),
+              SIGNAL(sslErrors(QNetworkReply*, const QList<QSslError> & )),
+              this,
+              SLOT(sslErrorHandler(QNetworkReply*, const QList<QSslError> & )));
     m_phoneGap = new PhoneGap(ui->webView);
 }
 
@@ -84,4 +91,17 @@ void MainWindow::showExpanded()
 #else
     show();
 #endif
+}
+
+void MainWindow::sslErrorHandler(QNetworkReply* qnr, const QList<QSslError> & errlist)
+{
+  //Workaround for problem that https does not work
+  // according to http://developer.qt.nokia.com/forums/viewthread/5861
+  // Attention:
+
+  qDebug() << "sslErrorHandler: ";
+  // show list of all ssl errors
+  foreach (QSslError err, errlist)
+    qDebug() << "ssl error: " << err;
+   qnr->ignoreSslErrors();
 }

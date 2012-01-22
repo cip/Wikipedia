@@ -42,6 +42,8 @@ public:
     void setOrientation(ScreenOrientation orientation);
 
     void showExpanded();
+public slots:
+        void sslErrorHandler(QNetworkReply* qnr, const QList<QSslError> & errlist);
 
 private:
     Ui::MainWindow *ui;
