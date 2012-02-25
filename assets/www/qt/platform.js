@@ -113,12 +113,6 @@ function updateMenuState() {
 };
 
 // @Override
-function getPhoneGapVersion(callback, error) {
-	callback('n/a');
-}
-
-
-// @Override
 function popupMenu(items, callback, options) {
     if (options.origin) {
         var $origin = $(options.origin),
