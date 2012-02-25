@@ -112,15 +112,27 @@ function updateMenuState() {
     });
 };
 
+
 // @Override
 function popupMenu(items, callback, options) {
-    if (options.origin) {
-        var $origin = $(options.origin),
-            pos = $origin.offset();
-        options.left = pos.left;
-        options.top = 0; // hack pos.top;
-        options.width = $origin.width();
-        options.height = $origin.height();
-    }
-    window.plugins.actionSheet.create('', items, callback, options);
+    options = $.extend({destructiveButtonIndex: null, cancelButtonIndex: null}, options || {});
+
+    var $bg = $('<div class="actionsheet-bg"></div>').appendTo('body'),
+        $sheet = $('<div class="actionsheet"></div>').appendTo('body');
+    $.each(items, function(index, label) {
+        var $button = $('<button>')
+            .text(label)
+            .appendTo($sheet)
+            .click(function() {
+                $sheet.remove();
+                $bg.remove();
+                callback(label, index);
+            });
+        if (index === options.destructiveButtonIndex) {
+            $button.addClass('destructive');
+        }
+        if (index === options.cancelButtonIndex) {
+            $button.addClass('cancel');
+        }
+    });
 }
