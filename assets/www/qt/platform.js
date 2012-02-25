@@ -9,6 +9,10 @@ window.addEventListener('load', function() {
 	chrome.initialize();
 }, true);
 
+chrome.addPlatformInitializer(function() {
+        $('html').removeClass('goodscroll').addClass('badscroll');
+});
+
 function updateMenuState() {
 	var items = [
 		{
