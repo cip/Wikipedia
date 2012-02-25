@@ -16,11 +16,19 @@ if (ua.match(/; Android /)) {
 	platform = 'ios';
 }
 
+//FIXME
+platform  = "qt"
+
 if (platform == 'unknown') {
 	// Assume we're a generic web browser.
 	platform = 'web';
 } else {
-	includes.push('phonegap-1.4.1.js');
+    if (platform=='qt') {
+        includes.push('cordova.js');
+        includes.push('cordova.qt.js');
+    } else {
+        includes.push('phonegap-1.4.1.js');
+    }
 	var plugins = {
 		android: [
 			'menu/menu.android.js',
@@ -37,6 +45,8 @@ if (platform == 'unknown') {
 			'ActionSheet.js',
 			'ShareKitPlugin.js'
 		],
+        qt: [
+        ],
 	};
 	if (platform in plugins) {
 		$.each(plugins[platform], function(i, path) {
