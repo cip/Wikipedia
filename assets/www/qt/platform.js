@@ -112,6 +112,11 @@ function updateMenuState() {
     });
 };
 
+network.isConnected = function()  {
+//    return navigator.network.connection.type == Connection.NONE ? false : true;
+    //FIXME
+    return true;
+}
 
 // @Override
 function popupMenu(items, callback, options) {
