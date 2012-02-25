@@ -2,9 +2,9 @@
 # by adapting the examples below.
 # file1.source = myfile
 # dir1.source = mydir
-wwwDir.source = www
-xmlDir.source = xml
 
+wwwDir.source = ../assets/www
+xmlDir.source = ../res/xml
 
 SOURCES += main.cpp \
     src/plugins/notification.cpp \
