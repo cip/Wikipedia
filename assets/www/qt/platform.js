@@ -13,6 +13,13 @@ chrome.addPlatformInitializer(function() {
         $('html').removeClass('goodscroll').addClass('badscroll');
 });
 
+chrome.doFocusHack =  function()  {
+            console.log("in empty doFocusHack.");
+        //FIXME: With normal doFocusHack search, location, history, saved pages
+            //does not work. (not displayed). (Note that history and saved pages
+            //also with this hack only working in simulator)
+    }
+
 function setMenuItemState(action, state) {
     // Stupid iterator
     $.each(menu_items, function(i, item) {
