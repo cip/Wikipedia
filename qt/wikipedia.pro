@@ -4,7 +4,10 @@
 # dir1.source = mydir
 
 wwwDir.source = ../assets/www
+wwwDir.target = .
 xmlDir.source = ../res/xml
+resDir.source = ../res
+resDir.target = .
 
 SOURCES += main.cpp \
     src/plugins/notification.cpp \
@@ -91,7 +94,13 @@ greaterThan(QT_MAJOR_VERSION, 4) {
     CONFIG += mobility
     MOBILITY += feedback location systeminfo sensors
 }
-DEPLOYMENTFOLDERS = common_qml platform_qml wwwDir xmlDir
+DEPLOYMENTFOLDERS = common_qml platform_qml wwwDir resDir xmlDir
+message(common_qml.source: $$common_qml.source)
+message(platform_qml.source: $$platform_qml.source)
+message(wwwDir.source: $$wwwDir.source)
+message(xmlDir.source: $$xmlDir.source)
+
+
 
 # Please do not modify the following two lines. Required for deployment.
 include(qmlapplicationviewer/qmlapplicationviewer.pri)
