@@ -14,10 +14,11 @@ if (ua.match(/; Android /)) {
 } else if (ua.match(/\((iPhone|iPod|iPad)/)) {
 	// Mozilla/5.0 (iPhone Simulator; U; CPU iPhone OS 4_3_2 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Mobile/8H7
 	platform = 'ios';
+} else if (ua.match(/Qt/)) {
+    // Qt Simulator (on windows): Mozilla/5.0 (Unknown; U; Windows NT 6.1; de-AT) AppleWebKit/533.3 (KHTML, like Gecko) Qt/4.7.4 Safari/533.3
+    // Symbian N8: userAgent: Mozilla/5.0 (Symbian; U; N8-00; de-DE) AppleWebKit/534.3 (KHTML, like Gecko) Qt/4.7.4 Mobile Safari/534.3
+    platform = 'qt';
 }
-
-//FIXME
-platform  = "qt"
 
 if (platform == 'unknown') {
 	// Assume we're a generic web browser.
